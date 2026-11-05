@@ -23,7 +23,7 @@ param([string]$Mode)
     function Refresh-Path {
         $m = [Environment]::GetEnvironmentVariable("Path", "Machine")
         $u = [Environment]::GetEnvironmentVariable("Path", "User")
-        $env:Path = "$env:USERPROFILE\.local\bin;$env:ProgramFiles\Git\cmd;$m;$u"
+        $env:Path = "$env:USERPROFILE\.local\bin;$env:ProgramFiles\Git\cmd;$env:ProgramFiles\nodejs;$m;$u"
     }
     function Has($name) { [bool](Get-Command $name -ErrorAction SilentlyContinue) }
     function Install-Remote($name, $url) {
@@ -42,6 +42,12 @@ param([string]$Mode)
             & winget install --id Git.Git -e --silent --accept-source-agreements --accept-package-agreements
             Refresh-Path
             if (-not (Has git)) { throw "Git install failed. Install Git for Windows, then run again." }
+        }
+        if (-not (Has node)) {  # ponytail hooks run on node
+            Write-Host "== Installing Node.js LTS"
+            & winget install --id OpenJS.NodeJS.LTS -e --silent --accept-source-agreements --accept-package-agreements
+            Refresh-Path
+            if (-not (Has node)) { throw "Node.js install failed. Install Node.js LTS, then run again." }
         }
         if (-not (Has uv)) { Install-Remote "uv" "https://astral.sh/uv/install.ps1" }
         if (-not (Has claude)) { Install-Remote "claude" "https://claude.ai/install.ps1" }

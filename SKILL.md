@@ -9,7 +9,7 @@ Một lệnh, chạy lại bao nhiêu lần cũng được (chỉ cài phần th
 
 `powershell -ExecutionPolicy Bypass -File "<skill>/scripts/bootstrap.ps1" apply`
 
-Bootstrap tự cài uv, Claude Code CLI nếu thiếu, bật `git core.longpaths`, rồi chạy `setup.py` bằng Python 3.13 qua uv. Dùng `check` thay `apply` để chỉ xem, không sửa.
+Bootstrap tự cài Git, Node.js LTS (hook ponytail cần), uv, Claude Code CLI nếu thiếu, bật `git core.longpaths`, rồi chạy `setup.py` bằng Python 3.13 qua uv. Dùng `check` thay `apply` để chỉ xem, không sửa.
 
 | AI | Windows-MCP | Ponytail | Headroom |
 |---|---|---|---|

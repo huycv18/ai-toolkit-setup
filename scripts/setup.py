@@ -84,6 +84,16 @@ def items():
     """(tên, đạt chưa, hàm cài). Thứ tự quan trọng: tool trước, proxy trước khi trỏ Codex vào proxy."""
     out = []
 
+    # --- runtime cho hook: ponytail chạy node, headroom chạy sh (Git Bash); bootstrap cài, ở đây chỉ kiểm ---
+    def need(prog, hint):
+        def fail():
+            raise RuntimeError(f"thiếu {prog}: {hint}, rồi mở lại Claude/Codex")
+        return fail
+    sh_ok = shutil.which("sh") or (Path(r"C:\Program Files\Git\bin\sh.exe")).exists()
+    out.append(("Node.js (hook ponytail)", bool(shutil.which("node") or Path(r"C:\Program Files\nodejs\node.exe").exists()),
+                need("node", "winget install OpenJS.NodeJS.LTS")))
+    out.append(("Git Bash sh (hook headroom)", bool(sh_ok), need("sh", "winget install Git.Git")))
+
     # --- uv tools ---
     for env, spec, py in UV_TOOLS:
         cmd = ["tool", "install", spec] + (["--python", py] if py else [])
@@ -190,7 +200,7 @@ def main():
     if mode == "apply":
         print("\n--- kiểm lại ---")
         pending = report(False)
-    print(f"\nCòn {pending} mục chưa đạt." + (" Mở phiên mới của Claude, Codex để nạp plugin và MCP." if not pending else ""))
+    print(f"\nCòn {pending} mục chưa đạt." + (" Thoát hẳn rồi mở lại app Claude, Codex (để nhận PATH mới và nạp plugin, MCP)." if not pending else ""))
     sys.exit(1 if pending else 0)
 
 

@@ -13,6 +13,8 @@ if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {
     Write-Host "Installing Claude Code CLI..."
     Invoke-RestMethod https://claude.ai/install.ps1 | Invoke-Expression
 }
+# headroom repo has paths deeper than 260 chars; plugin clones fail without this
+git config --global core.longpaths true
 $env:PYTHONIOENCODING = "utf-8"
 uv run --no-project --python 3.13 "$PSScriptRoot\setup.py" $Mode
 exit $LASTEXITCODE

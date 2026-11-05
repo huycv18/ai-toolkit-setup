@@ -27,10 +27,12 @@ Bảng kết quả của lượt "kiểm lại" cuối, rồi nhắc việc ch�
 
 ## Phát hành
 
-Nguồn gốc ở studio repo `skills/ai-toolkit-setup`; repo public `huycv18/ai-toolkit-setup` là bản tách ra cho lệnh một dòng. Sửa xong thì đẩy (cần Huy cho push):
+Nguồn gốc ở studio repo `skills/ai-toolkit-setup`; repo public `huycv18/ai-toolkit-setup` là bản tách ra cho lệnh một dòng. Sửa xong thì đẩy (Huy cho tự push repo này, 05/11/2026):
 `git subtree split -P skills/ai-toolkit-setup -b toolkit-pub && git push toolkit toolkit-pub:main`
 
 ## Đã biết
+
+- Installer bên thứ ba (uv, Claude) có `exit`: chạy qua `iex` trực tiếp sẽ đóng cửa sổ của Huy (lỗi thật 05/11/2026). Bootstrap chạy chúng ở process con, bọc toàn bộ trong script block, ghi log `%USERPROFILE%\ai-toolkit-setup.log`, dừng chờ Enter ở cuối.
 
 - Đã chạy thử trên home trắng giả lập 05/11/2026: đạt hết, trừ plugin Headroom của Codex do đường dẫn home giả quá dài; với đường dẫn như máy thật thì cài được.
 - Codex chỉ được trỏ vào proxy khi proxy đã trả `/health` ready; trỏ vào proxy chết thì Codex hỏng hẳn.

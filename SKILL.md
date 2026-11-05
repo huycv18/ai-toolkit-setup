@@ -25,6 +25,11 @@ Bảng kết quả của lượt "kiểm lại" cuối, rồi nhắc việc ch�
 - Đăng nhập Claude, Codex (không tự động được).
 - Mở phiên mới của Claude, Codex để nạp plugin và MCP. Lần đầu Codex hỏi tin cậy hook của plugin ponytail, headroom: bấm tin cậy.
 
+## Phát hành
+
+Nguồn gốc ở studio repo `skills/ai-toolkit-setup`; repo public `huycv18/ai-toolkit-setup` là bản tách ra cho lệnh một dòng. Sửa xong thì đẩy (cần Huy cho push):
+`git subtree split -P skills/ai-toolkit-setup -b toolkit-pub && git push toolkit toolkit-pub:main`
+
 ## Đã biết
 
 - Đã chạy thử trên home trắng giả lập 05/11/2026: đạt hết, trừ plugin Headroom của Codex do đường dẫn home giả quá dài; với đường dẫn như máy thật thì cài được.

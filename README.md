@@ -14,8 +14,7 @@ Mở PowerShell, dán:
 irm https://raw.githubusercontent.com/huycv18/ai-toolkit-setup/main/scripts/bootstrap.ps1 | iex
 ```
 
-Script tự cài Git, Node.js LTS (winget, không được thì bản zip vào `%LOCALAPPDATA%\Programs
-odejs`, không cần admin), uv, Claude Code CLI nếu thiếu; chỉ cài phần còn thiếu; cài xong tự kiểm lại. Chạy lại bao nhiêu lần cũng được.
+Script tự cài Git, Node.js LTS (winget, không được thì bản zip vào `%LOCALAPPDATA%\Programs\nodejs`, không cần admin), uv, Claude Code CLI nếu thiếu; chỉ cài phần còn thiếu; cài xong tự kiểm lại. Chạy lại bao nhiêu lần cũng được.
 
 Chỉ kiểm, không sửa: tải repo về rồi chạy `powershell -ExecutionPolicy Bypass -File scripts\bootstrap.ps1 check`.
 

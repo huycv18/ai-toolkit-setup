@@ -1,6 +1,6 @@
 ---
 name: ai-toolkit-setup
-description: Cài bộ công cụ chuẩn của Huy trên máy Windows mới cho Claude Code và các AI khác (Codex/GPT, Gemini/Antigravity) - Windows-MCP (điều khiển desktop), plugin Ponytail (giảm output), Headroom (plugin + proxy nén token cho Codex). Một lệnh, không hỏi gì, chỉ cài phần thiếu, tự kiểm lại. Dùng khi Huy nói "setup máy mới", "cài Windows-MCP, Ponytail, Headroom", hoặc gõ /ai-toolkit-setup.
+description: Cài bộ công cụ chuẩn của Huy trên máy Windows mới cho Claude Code và các AI khác (Codex/GPT, Gemini/Antigravity) - Windows-MCP (điều khiển desktop), plugin Ponytail (giảm output), Headroom (MCP + proxy nén token cho Codex, chạy ẩn). Một lệnh, không hỏi gì, chỉ cài phần thiếu, tự kiểm lại. Dùng khi Huy nói "setup máy mới", "cài Windows-MCP, Ponytail, Headroom", hoặc gõ /ai-toolkit-setup.
 ---
 
 # ai-toolkit-setup
@@ -9,12 +9,12 @@ Một lệnh, chạy lại bao nhiêu lần cũng được (chỉ cài phần th
 
 `powershell -ExecutionPolicy Bypass -File "<skill>/scripts/bootstrap.ps1" apply`
 
-Bootstrap tự cài Git, Node.js LTS (hook ponytail cần), uv, Claude Code CLI nếu thiếu, bật `git core.longpaths`, rồi chạy `setup.py` bằng Python 3.13 qua uv. Dùng `check` thay `apply` để chỉ xem, không sửa.
+Bootstrap tự cài Git, Node.js LTS (hook ponytail cần; winget hỏng thì tải zip vào thư mục người dùng, không cần admin), uv, Claude Code CLI nếu thiếu, bật `git core.longpaths`, rồi chạy `setup.py` bằng Python 3.13 qua uv. Dùng `check` thay `apply` để chỉ xem, không sửa.
 
 | AI | Windows-MCP | Ponytail | Headroom |
 |---|---|---|---|
-| Claude Code | `claude mcp add --scope user` | `claude plugin install` | plugin (Claude không đi qua proxy được) |
-| Codex (GPT), tự dò | `codex mcp add` | `codex plugin add` | plugin + MCP + proxy `codex-local` cổng 8787, `model_provider = "headroom"` |
+| Claude Code | `claude mcp add --scope user` | `claude plugin install` | không, gỡ plugin headroom nếu có (Claude không đi qua proxy được) |
+| Codex (GPT), tự dò | `codex mcp add` | `codex plugin add` | MCP + proxy `codex-local` cổng 8787 chạy bằng task ẩn `ai-toolkit-headroom-codex`; gỡ plugin headroom và hook headroom trong `~/.codex/hooks.json`; `model_provider = "headroom"` |
 | Gemini / Antigravity, có `~/.gemini` | `settings.json` | chưa hỗ trợ | chưa hỗ trợ |
 
 Không có Codex thì bỏ qua proxy và phần Codex (không tính là lỗi). Cài Codex sau thì chạy lại `apply`.
@@ -23,7 +23,7 @@ Không có Codex thì bỏ qua proxy và phần Codex (không tính là lỗi). 
 
 Bảng kết quả của lượt "kiểm lại" cuối, rồi nhắc việc chỉ người làm được:
 - Đăng nhập Claude, Codex (không tự động được).
-- Mở phiên mới của Claude, Codex để nạp plugin và MCP. Lần đầu Codex hỏi tin cậy hook của plugin ponytail, headroom: bấm tin cậy.
+- Mở phiên mới của Claude, Codex để nạp plugin và MCP. Lần đầu Codex hỏi tin cậy hook của plugin ponytail: bấm tin cậy.
 
 ## Phát hành
 

@@ -23,7 +23,29 @@ param([string]$Mode)
     function Refresh-Path {
         $m = [Environment]::GetEnvironmentVariable("Path", "Machine")
         $u = [Environment]::GetEnvironmentVariable("Path", "User")
-        $env:Path = "$env:USERPROFILE\.local\bin;$env:ProgramFiles\Git\cmd;$env:ProgramFiles\nodejs;$m;$u"
+        $env:Path = "$env:USERPROFILE\.local\bin;$env:ProgramFiles\Git\cmd;$env:ProgramFiles\nodejs;$env:LOCALAPPDATA\Programs\nodejs;$m;$u"
+    }
+    function Install-NodePortable([string]$Dest = "$env:LOCALAPPDATA\Programs\nodejs", [switch]$NoPath) {
+        Write-Host "== Installing Node.js LTS (portable zip, no admin)"
+        $arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "x64" }
+        # parentheses unroll the JSON array; PowerShell 5.1 pipes it as one object otherwise
+        $ver = ((Invoke-RestMethod "https://nodejs.org/dist/index.json") | Where-Object { $_.lts } | Select-Object -First 1).version
+        if ($ver -notmatch '^v\d+\.\d+\.\d+$') { throw "Cannot read Node.js LTS version from nodejs.org" }
+        $name = "node-$ver-win-$arch"
+        $zip = Join-Path $env:TEMP "$name.zip"
+        Invoke-WebRequest "https://nodejs.org/dist/$ver/$name.zip" -OutFile $zip -UseBasicParsing
+        $tmp = Join-Path $env:TEMP "node-unzip"
+        Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
+        Expand-Archive $zip $tmp -Force
+        Remove-Item $Dest -Recurse -Force -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Force (Split-Path $Dest) | Out-Null
+        Move-Item (Join-Path $tmp $name) $Dest
+        Remove-Item $zip, $tmp -Recurse -Force -ErrorAction SilentlyContinue
+        if (-not $NoPath) {
+            $u = [Environment]::GetEnvironmentVariable("Path", "User")
+            if (($u -split ";") -notcontains $Dest) { [Environment]::SetEnvironmentVariable("Path", "$Dest;$u", "User") }
+            Refresh-Path
+        }
     }
     function Has($name) { [bool](Get-Command $name -ErrorAction SilentlyContinue) }
     function Install-Remote($name, $url) {
@@ -45,9 +67,13 @@ param([string]$Mode)
         }
         if (-not (Has node)) {  # ponytail hooks run on node
             Write-Host "== Installing Node.js LTS"
-            & winget install --id OpenJS.NodeJS.LTS -e --silent --accept-source-agreements --accept-package-agreements
-            Refresh-Path
-            if (-not (Has node)) { throw "Node.js install failed. Install Node.js LTS, then run again." }
+            if (Has winget) {
+                & winget install --id OpenJS.NodeJS.LTS -e --silent --accept-source-agreements --accept-package-agreements
+                Refresh-Path
+            }
+            # winget missing, blocked, or the MSI needed admin: portable zip into the user profile, no admin
+            if (-not (Has node)) { Install-NodePortable }
+            if (-not (Has node)) { throw "Node.js install failed. Install Node.js LTS from nodejs.org, then run again." }
         }
         if (-not (Has uv)) { Install-Remote "uv" "https://astral.sh/uv/install.ps1" }
         if (-not (Has claude)) { Install-Remote "claude" "https://claude.ai/install.ps1" }
